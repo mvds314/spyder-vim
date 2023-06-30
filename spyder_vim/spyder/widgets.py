@@ -25,7 +25,7 @@ _ = get_translation("spyder_vim.spyder")
 
 
 VIM_COMMAND_PREFIX = ":!/?"
-VIM_MOTION_PREFIXES = ["ci"]
+VIM_MOTION_PREFIXES = ["ci", "di"]
 VIM_PREFIX = "acdfFgmritTyzZ@'`\"<>"
 RE_VIM_PREFIX_STR = r"^(\d*)([{prefixes}].|[^{prefixes}0123456789])(.*)$"
 RE_VIM_PREFIX = re.compile(RE_VIM_PREFIX_STR.format(prefixes=VIM_PREFIX))
@@ -1050,6 +1050,13 @@ class VimKeys(QObject):
         self.cw(1)
         self.i()
 
+    def diw(self, repeat):
+        """Delete current word, but stay in normal model. As in VIM, repeat is ignored."""
+        self.b(1)
+        self.v(1)
+        self.e(1)
+        self.d(1)
+
     def x(self, repeat):
         """Delete the character under cursor with delete from EndOfLine."""
         editor = self._widget.editor()
@@ -1599,8 +1606,8 @@ class VimWidget(QWidget):
             repeat, key, leftover = -1, "a", ""
         elif text == "gt":
             repeat, key, leftover = -1, "gt", ""
-        elif text == "ciw" and not self.vim_keys.visual_mode:
-            repeat, key, leftover = -1, "ciw", ""
+        elif text in ["ciw", "diw"] and not self.vim_keys.visual_mode:
+            repeat, key, leftover = -1, text, ""
         else:
             if self.vim_keys.visual_mode and text[0] not in VIM_ARG_PREFIX:
                 match = RE_VIM_VISUAL_PREFIX.match(text)
