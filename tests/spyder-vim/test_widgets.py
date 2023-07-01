@@ -2090,7 +2090,7 @@ def test_less_visual_command(vim_bot, text, command_list, result, cursor_pos):
         (' ab\n  \n    cdef\n     \n', ['j', '3<<'], ' ab\n\ncdef\n \n', 4)
     ]
 )
-def test_lessless_command(vim_bot, text, command_list, result, cursor_pos):
+def test_lessless_commands(vim_bot, text, command_list, result, cursor_pos):
     """Test << command."""
     main, editor_stack, editor, vim, qtbot = vim_bot
     editor.set_text(text)
@@ -2102,3 +2102,27 @@ def test_lessless_command(vim_bot, text, command_list, result, cursor_pos):
     assert editor.toPlainText() == result
     assert editor.textCursor().position() == cursor_pos
 
+@pytest.mark.parametrize(
+    "text, command_list, result, cursor_pos",
+    [
+        (' asdf xyz\ncdef\n', ['w', 'l', 'ciw'], '  xyz\ncdef\n', 1),
+        (' asdf xyz\ncdef\n', ['w', 'ciw'], '  xyz\ncdef\n', 1),
+        (' asdf xyz\ncdef\n', ['w', 'w','l', 'ciw'], ' asdf \ncdef\n', 6),
+        (' asdf xyz\ncdef\n', ['w', 'l', 'diw'], '  xyz\ncdef\n', 1),
+        (' asdf xyz\ncdef\n', ['w', 'diw'], '  xyz\ncdef\n', 1),
+        (' asdf xyz\ncdef\n', ['w', 'w','l', 'diw'], ' asdf \ncdef\n', 6),
+        (' asdf xyz\ncdef\n', ['w', 'l', 'diw', 'w', 'e', 'p'], '  xyzasdf\ncdef\n', 8),
+    ]
+)
+def test_cdiw_command(vim_bot, text, command_list, result, cursor_pos):
+    """Test << command."""
+    main, editor_stack, editor, vim, qtbot = vim_bot
+    editor.set_text(text)
+
+    cmd_line = vim.get_focus_widget()
+    for command in command_list:
+        qtbot.keyClicks(cmd_line, command)
+
+    assert editor.toPlainText() == result
+    assert editor.textCursor().position() == cursor_pos
+    
