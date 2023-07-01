@@ -1046,13 +1046,13 @@ class VimKeys(QObject):
         
     def ciw(self, repeat):
         """Cut current word and edit. As in VIM, repeat is ignored."""
-        self.b(1)
+        self._move_cursor(QTextCursor.StartOfWord)
         self.cw(1)
         self.i()
 
     def diw(self, repeat):
         """Delete current word, but stay in normal model. As in VIM, repeat is ignored."""
-        self.b(1)
+        self._move_cursor(QTextCursor.StartOfWord)
         self.v(1)
         self.e(1)
         self.d(1)
