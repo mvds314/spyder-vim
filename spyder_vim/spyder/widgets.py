@@ -83,7 +83,7 @@ class VimKeys(QObject):
         elif key[0] in "fFr":
             leftover = key[1]
             key = key[0]
-        elif key[0] in "ia" and self.visual_mode == "char":
+        elif key not in ['iw'] and key[0] in "ia" and self.visual_mode == "char":
             leftover = key[1]
             key = key[0]
         elif key[0] == "\"":
@@ -1049,6 +1049,22 @@ class VimKeys(QObject):
         self._move_cursor(QTextCursor.StartOfWord)
         self.cw(1)
         self.i()
+        
+    def iw(self, repeat):
+        """Visually select current word. As in VIM, repeat is ignored."""
+        if self.visual_mode == 'char':
+            self.exit_visual_mode()
+            cursor = self._editor_cursor()
+            self._move_cursor(QTextCursor.StartOfWord)
+            if not cursor.atBlockEnd():
+                start_position = cursor.position()
+                cursor.movePosition(QTextCursor.EndOfWord)
+                end_position = cursor.position()
+                cursor.setPosition(start_position)
+                self.v(repeat=1)
+                repeat=end_position-start_position-1
+                if repeat >0:
+                    self.l(repeat=repeat)
 
     def diw(self, repeat):
         """Delete current word, but stay in normal model. As in VIM, repeat is ignored."""
@@ -1607,6 +1623,8 @@ class VimWidget(QWidget):
         elif text == "gt":
             repeat, key, leftover = -1, "gt", ""
         elif text in ["ciw", "diw"] and not self.vim_keys.visual_mode:
+            repeat, key, leftover = -1, text, ""
+        elif text in ["iw"] and self.vim_keys.visual_mode:
             repeat, key, leftover = -1, text, ""
         else:
             if self.vim_keys.visual_mode and text[0] not in VIM_ARG_PREFIX:
