@@ -2112,9 +2112,12 @@ def test_lessless_commands(vim_bot, text, command_list, result, cursor_pos):
         (' asdf xyz\ncdef\n', ['w', 'diw'], '  xyz\ncdef\n', 1),
         (' asdf xyz\ncdef\n', ['w', 'w','l', 'diw'], ' asdf \ncdef\n', 6),
         (' asdf xyz\ncdef\n', ['w', 'l', 'diw', 'w', 'e', 'p'], '  xyzasdf\ncdef\n', 8),
+        (' asdf xyz\ncdef\n', ['w', 'v', 'iw', 'd'], '  xyz\ncdef\n', 1),
+        (' a xyz\ncdef\n', ['w', 'v', 'iw', 'd'], '  xyz\ncdef\n', 1),
+        (' asdf asdf\ncdef\n', ['w', 'v', 'iw', 'y', 'w','l', 'v', 'iw', 'p'], ' asdf asdf\ncdef\n', 9),
     ]
 )
-def test_cdiw_command(vim_bot, text, command_list, result, cursor_pos):
+def test_cdviw_command(vim_bot, text, command_list, result, cursor_pos):
     """Test << command."""
     main, editor_stack, editor, vim, qtbot = vim_bot
     editor.set_text(text)
