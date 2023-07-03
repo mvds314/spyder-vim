@@ -1054,17 +1054,17 @@ class VimKeys(QObject):
         """Visually select current word. As in VIM, repeat is ignored."""
         if self.visual_mode == 'char':
             self.exit_visual_mode()
-            cursor = self._editor_cursor()
             self._move_cursor(QTextCursor.StartOfWord)
+            cursor = self._editor_cursor()
             if not cursor.atBlockEnd():
-                start_position = cursor.position()
-                cursor.movePosition(QTextCursor.EndOfWord)
-                end_position = cursor.position()
-                cursor.setPosition(start_position)
-                self.v(repeat=1)
-                repeat=end_position-start_position-1
-                if repeat >0:
-                    self.l(repeat=repeat)
+                 start_position = cursor.position()
+                 cursor.movePosition(QTextCursor.EndOfWord)
+                 end_position = cursor.position()
+                 cursor.setPosition(start_position)
+                 self.v(repeat=1)
+                 repeat=end_position-start_position-1
+                 if repeat >0:
+                     self.l(repeat=repeat)
 
     def diw(self, repeat):
         """Delete current word, but stay in normal model. As in VIM, repeat is ignored."""
